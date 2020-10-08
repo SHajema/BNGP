@@ -157,7 +157,7 @@ def main_processing(args, reads):
 
 def main():
     args = parse_args()
-    count, reads, result_list = 0, [], []
+    count, reads, result_list = 3, [], []
     with open(args.inputfile, 'r') as f:
         for line in f:
             count += 1
@@ -166,7 +166,6 @@ def main():
                 reads = []
             if count % 4 == 0:
                 reads.append(line.rstrip())
-                print(reads)
 
     if len(reads) != 0:
         result_list.append(main_processing(args, reads))
