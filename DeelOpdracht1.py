@@ -129,7 +129,7 @@ def parse_args():
     parser = argparse.ArgumentParser()
     parser.add_argument('-i', '--inputfile', metavar='File', type=str, required=True,
                         help='The file you wish to use as input for the program.')
-    parser.add_argument('-o', '--outputfile', metavar='String', type=str, default=None,
+    parser.add_argument('-o', '--outputfile', metavar='String', type=str, default="Result.txt",
                         help='Give the name of the outputfile')
     parser.add_argument('-t', '--threads', metavar='number of threads', type=int, default=4,
                         help='Give the number of threads you would like to use.')
