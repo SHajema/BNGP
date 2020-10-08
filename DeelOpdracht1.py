@@ -157,7 +157,7 @@ def main_processing(args, reads):
 
 def main():
     args = parse_args()
-    count, reads, result_list = 3, [], []
+    count, reads, result_list = 2, [], []
     with open(args.inputfile, 'r') as f:
         for line in f:
             count += 1
