@@ -100,7 +100,6 @@ def main(args):
             if count != 0 and count % 4 == 0:
                 reads += lines[0], lines[1], lines[3]
                 lines = []
-                print(lines)
     if len(reads) != 0:
         result_list.append(main_processing(args, reads))
         print(len(result_list))

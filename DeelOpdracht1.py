@@ -166,6 +166,7 @@ def main():
                 reads = []
             if count % 4 == 0:
                 reads.append(line.rstrip())
+                print(reads)
 
     if len(reads) != 0:
         result_list.append(main_processing(args, reads))
