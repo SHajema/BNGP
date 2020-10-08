@@ -110,7 +110,6 @@ def main(args):
 if __name__ == '__main__':
     start = time.perf_counter()
     args = parse_args()
-    args.inputfiles = ['/home/steen/Desktop/BNGP/Input/testbestand_paired_fw.fastq', '/home/steen/Desktop/BNGP/Input/testbestand_paired_rv.fastq']
     main(args)
 
     final = time.perf_counter()
