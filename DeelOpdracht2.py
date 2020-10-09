@@ -33,28 +33,22 @@ def calc_quality_score(values):
         return True
 
 
-def run_thread(pos, lines):
-    for x in range(0, len(lines), 3):
-        lines[x:x+3] = trim_read(lines[x:x+3])
-    return [pos, lines]
-
-
-def seperate_reads(read_list):
-    good_reads, bad_reads = '', ''
+def seperate_reads(read_list, bad_qual):
+    good_reads, bad_reads = [], []
 
     for x in range(0, len(read_list), 3):
-        if len(read_list[x+1]) > 19:
-            good_reads += read_list[x] + '\n'
-            good_reads += read_list[x+1] + '\n'
-            good_reads += '+\n'
-            good_reads += read_list[x+2] + '\n'
+        if len(read_list[x+1]) > 19 and bad_qual.get(read_list[x].split()[0], True):
+            good_reads += read_list[x:x+3]
         else:
-            bad_reads += read_list[x] + '\n'
-            bad_reads += read_list[x+1] + '\n'
-            bad_reads += '+\n'
-            bad_reads += read_list[x+2] + '\n'
-
+            bad_reads.append(read_list[x].split()[0])
     return good_reads, bad_reads
+
+
+def run_thread(pos, lines, bad_qual):
+    for x in range(0, len(lines), 3):
+        lines[x:x+3] = trim_read(lines[x:x+3])
+    good_reads, bad_reads = seperate_reads(lines, bad_qual)
+    return [pos, good_reads, bad_reads]
 
 
 def parse_args():
@@ -63,53 +57,131 @@ def parse_args():
                         help='The file you wish to use as input for the program.')
     parser.add_argument('-o', '--outputdir', metavar='Directory', type=str, default=None,
                         help='Use this to select an output directory for the output files')
-    parser.add_argument('-t', '--threads', metavar='number of threads', type=int, default=1,
+    parser.add_argument('-t', '--threads', metavar='number of threads', type=int, default=4,
                         help='Give the number of threads you would like to use.')
     parser.add_argument('-c', '--chunks', metavar='number of reads to load into RAM', type=int,
-                        default=10_000_000, help='Give the number of reads you wish to process at the same time.')
+                        default=2_000, help='Give the number of reads you wish to process at the same time.')
     args = parser.parse_args()
     return args
 
 
-def main_processing(args, reads):
-    reads_num = len(reads)
+def write_to_file(path, out, stop=False):
+    try:
+        with open(path, 'a+') as f:
+            f.write('\n'.join(out) + '\n')
+    except PermissionError:
+        if stop:
+            return 'No permission to write to: '+path
+        else:
+            print(f'No permission to write to {path}, trying current directory instead instead')
+            return write_to_file(path.split('/')[-1], out, stop=True)
+    return 'Output written to file: '+path
 
-    intlist = [int(x * (reads_num/3 // args.threads))*3 for x in range(args.threads)]
+
+def write_out(postfix, Dir, file, out):
+    filedir = "/".join(file.split('/')[:-1])+'/'
+    file = f'_{postfix}.'.join(file.split('/')[-1].split('.'))
+
+    if Dir:
+        if Dir[-1] != '/':
+            Dir += '/'
+        return write_to_file(Dir+file, out)
+    else:
+        return write_to_file(filedir+file, out)
+
+
+def temp_write(path, out):
+    with open(path, 'a+')as f:
+        f.write('\n'.join(out) + '\n')
+    return path
+
+
+def create_intlist(reads_num, threads):
+    intlist = [int(x * (reads_num / 3 // threads)) * 3 for x in range(threads)]
     intlist.append(int(reads_num))
-    final_results = []
+    return intlist
 
+
+def process_results(final_results, i):
+    good, bad = [], []
+    for result in final_results:
+        if len(result[1]) != 0 and i != 0:
+            good += result[1]
+        if len(result[2]) != 0:
+            bad += result[2]
+    return good, bad
+
+
+def multi_process(function, intlist, reads, bad_qual):
+    final_results = []
     with concurrent.futures.ProcessPoolExecutor() as executor:
-        results = [executor.submit(run_thread, x, reads[intlist[x]:intlist[x + 1]]) for x in range(args.threads)]
+        results = [executor.submit(function, x, reads[intlist[x]:intlist[x + 1]], bad_qual) for x in range(args.threads)]
     for r in concurrent.futures.as_completed(results):
         final_results.append(r.result())
     final_results.sort()
-    for result in final_results:
-        good_reads, bad_reads = seperate_reads(result[1])
-        print(good_reads.count('\n'))
+    return final_results
 
 
-def main(args):
-    count, reads, result_list, lines = 0, [], [], []
-    with open(args.inputfiles[0], 'r') as f:
-        for line in f:
-            count += 1
-            lines.append(line.rstrip())
-            if count != 0 and count % args.chunks*4 == 0:
-                result_list.append(main_processing(args, reads))
-                reads = []
+def main_processing(args, reads, piece, i, file, bad_qual):
+    reads_num = len(reads)
+
+    intlist = create_intlist(reads_num, args.threads)
+
+    final_results = multi_process(run_thread, intlist, reads, bad_qual)
+    good, bad = process_results(final_results, i)
+    if i == 0:
+        path = temp_write('temp.fastq', good)
+        good = []
+    if i == 1:
+        path = write_out('trimmed', args.outputdir, file, good)
+        good = []
+    return [piece, good, bad]
+
+
+def file_processing(file, i, bad_qual):
+    print('Trimming File: ' + file)
+    count, reads, result_list, lines, piece = 0, [], [], [], 0
+
+    with open(file, 'r') as f:
+        for count, line in enumerate(f):
             if count != 0 and count % 4 == 0:
                 reads += lines[0], lines[1], lines[3]
                 lines = []
-    if len(reads) != 0:
-        result_list.append(main_processing(args, reads))
-        print(len(result_list))
+            if count != 0 and count % (args.chunks * 4) == 0:
+                piece += 1
+                result_list.append(main_processing(args, reads, piece, i, file, bad_qual))
+                print(f'Processed {count // 4} reads')
+                reads = []
+            lines.append(line.rstrip())
 
+    if len(reads) != 0:
+        count += 1
+        reads += lines[0], lines[1], lines[3]
+        piece += 1
+        result_list.append(main_processing(args, reads, piece, i, file, bad_qual))
+        print(f'Processed {count // 4} reads')
+    return process_results(result_list, i)
+
+
+def main(args):
+    bad_qual = {}
+    result = file_processing(args.inputfiles[0], 0, bad_qual)
+    for read in result[1]:
+        bad_qual[read] = False
+    print(f'{len(result[1])} reads removed because they were too short')
+    result = file_processing(args.inputfiles[0], 1, bad_qual)
+    for read in result[1]:
+        bad_qual[read] = False
+    print(len(bad_qual.keys()))
+    print(len(result[0]))
     return True
 
 
 if __name__ == '__main__':
     start = time.perf_counter()
     args = parse_args()
+    if not args.inputfiles:
+        args.inputfiles = ['Input/testbestand_paired_fw.fastq', 'Input/testbestand_paired_rv.fastq']
     main(args)
 
     final = time.perf_counter()
