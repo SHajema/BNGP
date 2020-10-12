@@ -55,7 +55,7 @@ def run_thread(pos, lines):
 
 def parse_args():
     parser = argparse.ArgumentParser()
-    parser.add_argument('-i', '--inputfile', metavar='File', type=str, nargs=1, required=False,
+    parser.add_argument('-i', '--inputfile', metavar='File', type=str, required=False,
                         help='The file you wish to use as input for the program.')
     parser.add_argument('-o', '--outputfile', metavar='Directory', type=str, default="Trimmed_file.txt",
                         help='Use this to select an name for the output file')
