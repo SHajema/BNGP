@@ -140,7 +140,7 @@ def main_processing(args, reads, piece):
 
 
 def file_processing(file):
-    print('Trimming File: ' + file)
+    print(f'Trimming File: {file}')
     count, reads, result_list, lines, piece = 0, [], [], [], 0
 
     with open(file, 'r') as f:
@@ -165,7 +165,7 @@ def file_processing(file):
 
 
 def main(args):
-    result = file_processing(args.inputfiles[0])
+    result = file_processing(args.inputfile)
     print(f'{len(result[1])} reads removed because they were too short')
 
     return True
@@ -175,7 +175,7 @@ if __name__ == '__main__':
     start = time.perf_counter()
     args = parse_args()
     if not args.inputfile:
-        args.inputfiles = ['Input/testbestand_paired_fw.fastq']
+        args.inputfile = 'Input/testbestand_paired_fw.fastq'
     main(args)
 
     final = time.perf_counter()
