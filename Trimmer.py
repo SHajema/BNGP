@@ -6,7 +6,7 @@ GB_QUAL_DICT = {}
 
 def parse_args():
     parser = argparse.ArgumentParser()
-    parser.add_argument('-i', '--inputfiles', metavar='File', type=str, nargs=2, required=False,
+    parser.add_argument('-i', '--inputfile', metavar='File', type=str, nargs=1, required=False,
                         help='The file you wish to use as input for the program.')
     parser.add_argument('-o', '--outputfile', metavar='Directory', type=str, default="Trimmed_file.txt",
                         help='Use this to select an name for the output file')
@@ -103,8 +103,5 @@ def main_process(inputfile, outputfile):
 
 
 if __name__ == '__main__':
-    data = load_file("C:\\Users\\Steven\\PycharmProjects\\BNGP\\Input\\testbestand_paired_fw.fastq")
-    clean_file("Results.fastq")
-    for x in range(1, len(data.keys())+1, 1):
-        data[x] = trim_read(data[x])
-    write_file("Results.fastq", data)
+    args = parse_args()
+    main_process(args.inputfile, args.outputfile)
