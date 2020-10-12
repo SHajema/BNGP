@@ -59,6 +59,7 @@ def main_process(inputfiles, outputfiles):
     write_out(inputfiles[0].split("_bad.fastq")[1]+"_trimmed.fastq", data)
     write_out(inputfiles[0].split("_bad.fastq")[1]+"_trimmed.fastq", data)
 
+
 if __name__ == '__main__':
     bad_dict1 = read_bad_file(inputfile)
     bad_dict2 = read_bad_file()

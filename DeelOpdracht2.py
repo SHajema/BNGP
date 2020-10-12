@@ -141,7 +141,7 @@ def main_processing(args, reads, piece):
 
 def file_processing(file):
     print(f'Trimming File: {file}')
-    count, reads, result_list, lines, piece = 0, [], [], [], 0
+    reads, result_list, lines, piece = [], [], [], 0
 
     with open(file, 'r') as f:
         for count, line in enumerate(f):
