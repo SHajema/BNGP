@@ -1,9 +1,6 @@
 import argparse
 
 
-GB_QUAL_DICT = {}
-
-
 def parse_args():
     parser = argparse.ArgumentParser()
     parser.add_argument('-i', '--inputfile', metavar='File', type=str, required=True,
@@ -29,7 +26,7 @@ def trim_read(read):
 
 def split_seq(quality):
     for x in range(len(quality)-4):
-        if GB_QUAL_DICT.get(quality[x:x+5], calc_quality_score(quality[x:x + 5])):
+        if calc_quality_score(quality[x:x + 5]):
             return x+4
     return len(quality)
 
@@ -39,10 +36,8 @@ def calc_quality_score(values):
     for x in range(len(values)):
         score_num += ord(values[x])-33
     if score_num >= 100:
-        GB_QUAL_DICT[values] = False
         return False
     elif score_num < 100:
-        GB_QUAL_DICT[values] = True
         return True
 
 
@@ -89,12 +84,15 @@ def clean_file(path):
 
 
 def main_process(inputfile, outputfile):
-    data = load_file(inputfile)
     print(clean_file(outputfile))
+
+    data = load_file(inputfile)
+
     for x in range(1, len(data.keys()) + 1, 1):
         data[x] = trim_read(data[x])
         if x % 1_000_000 == 0:
             print(f"Trimmed {x} reads.")
+
     write_file(outputfile, data)
 
 
