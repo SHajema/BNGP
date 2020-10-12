@@ -160,7 +160,6 @@ def main(args):
     for read in result[1]:
         bad_qual[read] = False
     print(f'{len(result[1])} reads removed because they were too short')
-    
     return True
 
 
