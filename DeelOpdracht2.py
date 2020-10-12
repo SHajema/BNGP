@@ -35,27 +35,27 @@ def calc_quality_score(values):
         return True
 
 
-def seperate_reads(read_list, bad_qual):
+def seperate_reads(read_list):
     good_reads, bad_reads = [], []
 
     for x in range(0, len(read_list), 3):
-        if len(read_list[x+1]) > 19 and bad_qual.get(read_list[x].split()[0], True):
+        if len(read_list[x+1]) > 19:
             good_reads += read_list[x:x+3]
         else:
             bad_reads.append(read_list[x].split()[0])
     return good_reads, bad_reads
 
 
-def run_thread(pos, lines, bad_qual):
+def run_thread(pos, lines):
     for x in range(0, len(lines), 3):
         lines[x:x+3] = trim_read(lines[x:x+3])
-    good_reads, bad_reads = seperate_reads(lines, bad_qual)
+    good_reads, bad_reads = seperate_reads(lines)
     return [pos, good_reads, bad_reads]
 
 
 def parse_args():
     parser = argparse.ArgumentParser()
-    parser.add_argument('-i', '--inputfiles', metavar='File', type=str, nargs=2, required=False,
+    parser.add_argument('-i', '--inputfile', metavar='File', type=str, nargs=1, required=False,
                         help='The file you wish to use as input for the program.')
     parser.add_argument('-o', '--outputfile', metavar='Directory', type=str, default="Trimmed_file.txt",
                         help='Use this to select an name for the output file')
@@ -67,18 +67,37 @@ def parse_args():
     return args
 
 
-def write_out(file, data):
-    with open(file, "a+") as f:
-        for pos in range(0, len(data), 3):
-            f.write(f'{data[pos]}\n{data[pos + 1]}\n+\n{data[pos + 2]}\n')
-    return f"Wrote {len(data)//3} sequences to {file}"
+def write_out_bad(path, data):
+    print(f"\nWriting bad sequence IDs to: {path}...")
+    write_string = ""
+
+    with open(path, 'a+') as f:
+        for x in range(0, len(data), 1):
+            write_string += f'{data[x]}\n'
+            if x % 1_000_000 == 0 and x != 0:
+                f.write(write_string)
+                write_string = ""
+                print(f"Wrote {x} good reads to: {path}.")
+        if write_string != "":
+            f.write(write_string)
+
+    return f"Completed! Wrote {len(data)} bad Read IDs to: {path}\n"
 
 
-def temp_write(file, data):
-    with open(file, "a+") as f:
-        for pos in range(0, len(data), 3):
-            f.write(f'{data[pos]}\n{data[pos + 1]}\n+\n{data[pos + 2]}\n')
-    return f"Wrote {len(data) // 3} sequences to {file}"
+def write_file(path, data):
+    print(f"\nWriting correct sequences to: {path}...")
+    write_string = ""
+
+    with open(path, 'a+') as f:
+        for x in range(0, len(data), 3):
+            write_string += f'{data[x]}\n{data[x+1]}\n+\n{data[x+2]}\n'
+            if x % (1_000_000 * 3) == 0 and x != 0:
+                f.write(write_string)
+                write_string = ""
+                print(f"Wrote {x//3} bad read IDs to: {path}.")
+        if write_string != "":
+            f.write(write_string)
+    return f"Completed! Wrote {len(data)/3} sequences to: {path}\n"
 
 
 def create_intlist(reads_num, threads):
@@ -97,33 +116,30 @@ def process_results(final_results):
     return good, bad
 
 
-def multi_process(function, intlist, reads, bad_qual):
+def multi_process(function, intlist, reads):
     final_results = []
     with concurrent.futures.ProcessPoolExecutor() as executor:
-        results = [executor.submit(function, x, reads[intlist[x]:intlist[x + 1]], bad_qual) for x in range(args.threads)]
+        results = [executor.submit(function, x, reads[intlist[x]:intlist[x + 1]]) for x in range(args.threads)]
     for r in concurrent.futures.as_completed(results):
         final_results.append(r.result())
     final_results.sort()
     return final_results
 
 
-def main_processing(args, reads, piece, i, bad_qual):
+def main_processing(args, reads, piece):
     reads_num = len(reads)
 
     intlist = create_intlist(reads_num, args.threads)
 
-    final_results = multi_process(run_thread, intlist, reads, bad_qual)
+    final_results = multi_process(run_thread, intlist, reads)
     good, bad = process_results(final_results)
-    if i == 0:
-        print(temp_write('temp.fastq', good))
-        good = []
-    if i == 1:
-        print(write_out(args.outputfile, good))
-        good = []
+
+    print(write_file(args.outputfile, good))
+    print(write_out_bad((args.outputfile.split('.')[0]+"_bad.fastq"), bad))
     return [piece, good, bad]
 
 
-def file_processing(file, i, bad_qual):
+def file_processing(file):
     print('Trimming File: ' + file)
     count, reads, result_list, lines, piece = 0, [], [], [], 0
 
@@ -134,7 +150,7 @@ def file_processing(file, i, bad_qual):
                 lines = []
             if count != 0 and count % (args.chunks * 4) == 0:
                 piece += 1
-                result_list.append(main_processing(args, reads, piece, i, bad_qual))
+                result_list.append(main_processing(args, reads, piece))
                 print(f'Processed {count // 4} reads')
                 reads = []
             lines.append(line.rstrip())
@@ -143,31 +159,23 @@ def file_processing(file, i, bad_qual):
         count += 1
         reads += lines[0], lines[1], lines[3]
         piece += 1
-        result_list.append(main_processing(args, reads, piece, i, bad_qual))
+        result_list.append(main_processing(args, reads, piece))
         print(f'Processed {count // 4} reads')
     return process_results(result_list)
 
 
 def main(args):
-    bad_qual = {}
-    result = file_processing(args.inputfiles[0], 0, bad_qual)
-
-    for read in result[1]:
-        bad_qual[read] = False
+    result = file_processing(args.inputfiles[0])
     print(f'{len(result[1])} reads removed because they were too short')
 
-    result = file_processing(args.inputfiles[1], 1, bad_qual)
-    for read in result[1]:
-        bad_qual[read] = False
-    print(f'{len(result[1])} reads removed because they were too short')
     return True
 
 
 if __name__ == '__main__':
     start = time.perf_counter()
     args = parse_args()
-    if not args.inputfiles:
-        args.inputfiles = ['Input/testbestand_paired_fw.fastq', 'Input/testbestand_paired_rv.fastq']
+    if not args.inputfile:
+        args.inputfiles = ['Input/testbestand_paired_fw.fastq']
     main(args)
 
     final = time.perf_counter()
