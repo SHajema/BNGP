@@ -1,4 +1,5 @@
 import argparse
+import os
 
 
 def parse_args():
@@ -68,10 +69,16 @@ def main_process(inputfiles):
     complete_dict = create_complete_dict(inputfiles)
 
     data = read_file(inputfiles[0].split("_bad.fastq")[0] + '_good.fastq', complete_dict)
-    write_out(inputfiles[0].split("_bad.fastq")[0]+"_trimmed.fastq", data)
+    print(write_out(inputfiles[0].split("_bad.fastq")[0]+"_trimmed.fastq", data))
     del data
     data = read_file(inputfiles[1].split("_bad.fastq")[0] + '_good.fastq', complete_dict)
-    write_out(inputfiles[1].split("_bad.fastq")[0]+"_trimmed.fastq", data)
+    print(write_out(inputfiles[1].split("_bad.fastq")[0]+"_trimmed.fastq", data))
+    del data
+
+    print("Removing old files")
+    for item in inputfiles:
+        os.remove(item)
+        os.remove(item.split("_bad.fastq")[0] + '_good.fastq')
 
 
 if __name__ == '__main__':
