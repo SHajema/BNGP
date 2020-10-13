@@ -171,14 +171,14 @@ def main(args):
     print(clean_file(args.outputfile.split('.')[0] + "_good.fastq"))
     print(clean_file(args.outputfile.split('.')[0] + "_bad.fastq"))
     file_processing(args.inputfile)
-    return True
 
 
 if __name__ == '__main__':
     start = time.perf_counter()
     args = parse_args()
     if not args.inputfile:
-        args.inputfile = 'Input/testbestand_paired_fw.fastq'
+        args.inputfile = 'Input/testbestand_paired_rv.fastq'
+    args.outputfile = 'testbestand_paired_rv.fastq'
     main(args)
 
     final = time.perf_counter()
