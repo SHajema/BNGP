@@ -161,7 +161,15 @@ def file_processing(file):
     return
 
 
+def clean_file(path):
+    with open(path, 'w') as f:
+        f.write("")
+    return f"Removed content from file: {path}"
+
+
 def main(args):
+    print(clean_file(args.outputfile.split('.')[0] + "_good.fastq"))
+    print(clean_file(args.outputfile.split('.')[0] + "_bad.fastq"))
     file_processing(args.inputfile)
     return True
 
