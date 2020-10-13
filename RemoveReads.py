@@ -69,6 +69,7 @@ def main_process(inputfiles):
 
     data = read_file(inputfiles[0].split("_bad.fastq")[0] + '_good.fastq', complete_dict)
     write_out(inputfiles[0].split("_bad.fastq")[0]+"_trimmed.fastq", data)
+    del data
     data = read_file(inputfiles[1].split("_bad.fastq")[0] + '_good.fastq', complete_dict)
     write_out(inputfiles[1].split("_bad.fastq")[0]+"_trimmed.fastq", data)
 
