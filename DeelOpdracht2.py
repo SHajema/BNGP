@@ -108,6 +108,7 @@ def create_intlist(reads_num, threads):
 
 def process_results(final_results):
     good, bad = [], []
+    print(final_results)
     for result in final_results:
         if len(result[1]) != 0:
             good += result[1]
@@ -126,22 +127,20 @@ def multi_process(function, intlist, reads):
     return final_results
 
 
-def main_processing(args, reads, piece):
+def main_processing(args, reads):
     reads_num = len(reads)
 
     intlist = create_intlist(reads_num, args.threads)
-
     final_results = multi_process(run_thread, intlist, reads)
-    good, bad = process_results(final_results)
+    final_results = process_results(final_results)
 
-    print(write_file(args.outputfile, good))
-    print(write_out_bad((args.outputfile.split('.')[0]+"_bad.fastq"), bad))
-    return [piece, good, bad]
+    print(write_file(args.outputfile, final_results[0]))
+    print(write_out_bad((args.outputfile.split('.')[0]+"_bad.fastq"), final_results[1]))
 
 
 def file_processing(file):
     print(f'Trimming File: {file}')
-    reads, result_list, lines, piece = [], [], [], 0
+    reads, lines, piece = [], [], 0
 
     with open(file, 'r') as f:
         for count, line in enumerate(f):
@@ -149,8 +148,7 @@ def file_processing(file):
                 reads += lines[0], lines[1], lines[3]
                 lines = []
             if count != 0 and count % (args.chunks * 4) == 0:
-                piece += 1
-                result_list.append(main_processing(args, reads, piece))
+                main_processing(args, reads)
                 print(f'Processed {count // 4} reads')
                 reads = []
             lines.append(line.rstrip())
@@ -159,14 +157,14 @@ def file_processing(file):
         count += 1
         reads += lines[0], lines[1], lines[3]
         piece += 1
-        result_list.append(main_processing(args, reads, piece))
+        main_processing(args, reads)
         print(f'Processed {count // 4} reads')
-    return process_results(result_list)
+    return
 
 
 def main(args):
-    result = file_processing(args.inputfile)
-    print(f'{len(result[1])} reads removed because they were too short')
+    file_processing(args.inputfile)
+    #print(f'{len(result[1])} reads removed because they were too short')
 
     return True
 
