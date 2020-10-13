@@ -134,7 +134,7 @@ def main_processing(args, reads):
     final_results = multi_process(run_thread, intlist, reads)
     final_results = process_results(final_results)
 
-    print(write_file((args.outpoutfile.split('.')[0]+"_good.fastq"), final_results[0]))
+    print(write_file((args.outputfile.split('.')[0]+"_good.fastq"), final_results[0]))
     print(write_out_bad((args.outputfile.split('.')[0]+"_bad.fastq"), final_results[1]))
 
 
