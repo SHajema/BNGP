@@ -57,6 +57,8 @@ def parse_args():
     parser = argparse.ArgumentParser()
     parser.add_argument('-i', '--inputfile', metavar='File', type=str, required=False,
                         help='The file you wish to use as input for the program.')
+    parser.add_argument('-o', '--outputfile', metavar='Directory', type=str, default="Trimmed_file.txt",
+                        help='Use this to select an name for the output file')
     parser.add_argument('-t', '--threads', metavar='number of threads', type=int, default=4,
                         help='Give the number of threads you would like to use.')
     parser.add_argument('-c', '--chunks', metavar='number of reads to load into RAM', type=int,
@@ -132,8 +134,8 @@ def main_processing(args, reads):
     final_results = multi_process(run_thread, intlist, reads)
     final_results = process_results(final_results)
 
-    print(write_file((args.inputfile.split('.')[0]+"_good.fastq"), final_results[0]))
-    print(write_out_bad((args.inputfile.split('.')[0]+"_bad.fastq"), final_results[1]))
+    print(write_file((args.outpoutfile.split('.')[0]+"_good.fastq"), final_results[0]))
+    print(write_out_bad((args.outputfile.split('.')[0]+"_bad.fastq"), final_results[1]))
 
 
 def file_processing(file):
