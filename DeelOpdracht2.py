@@ -108,7 +108,7 @@ def create_intlist(reads_num, threads):
 
 def process_results(final_results):
     good, bad = [], []
-    print(final_results)
+
     for result in final_results:
         if len(result[1]) != 0:
             good += result[1]
@@ -134,13 +134,13 @@ def main_processing(args, reads):
     final_results = multi_process(run_thread, intlist, reads)
     final_results = process_results(final_results)
 
-    print(write_file(args.outputfile, final_results[0]))
-    print(write_out_bad((args.outputfile.split('.')[0]+"_bad.fastq"), final_results[1]))
+    print(write_file((args.inputfile.split('.')[0]+"_good.fastq"), final_results[0]))
+    print(write_out_bad((args.inputfile.split('.')[0]+"_bad.fastq"), final_results[1]))
 
 
 def file_processing(file):
     print(f'Trimming File: {file}')
-    reads, lines, piece = [], [], 0
+    reads, lines = [], []
 
     with open(file, 'r') as f:
         for count, line in enumerate(f):
@@ -156,7 +156,6 @@ def file_processing(file):
     if len(reads) != 0:
         count += 1
         reads += lines[0], lines[1], lines[3]
-        piece += 1
         main_processing(args, reads)
         print(f'Processed {count // 4} reads')
     return
@@ -164,8 +163,6 @@ def file_processing(file):
 
 def main(args):
     file_processing(args.inputfile)
-    #print(f'{len(result[1])} reads removed because they were too short')
-
     return True
 
 
