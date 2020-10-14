@@ -1,6 +1,10 @@
+import os
+
 SAMPLES = ["/exports/bngp_data/reads/bngsa_nietinfected_1.fastq", "/exports/bngp_data/reads/bngsa_nietinfected_2.fastq"]
+SCRIPTS = "/exports/bngp_home/BNGP/"
 THREADS = 4
 CHUNKS = 3_000_000
+
 
 rule all:
     input:
@@ -14,7 +18,7 @@ rule QC_no_Trim:
     output:
         "Results/bngsa_nietinfected_{sample}.QC"
     shell:
-        "python DeelOpdracht1.py -i {input} -t {THREADS} -c {CHUNKS} -o {output}"
+        "python {os.path.join(SCRIPTS, 'DeelOpdracht1.py'} -i {input} -t {THREADS} -c {CHUNKS} -o {output}"
 
 rule Trimmer_step1:
     input:
@@ -23,7 +27,7 @@ rule Trimmer_step1:
         "Results/bngsa_nietinfected_{sample}_good.fastq",
         "Results/bngsa_nietinfected_{sample}_bad.fastq"
     shell:
-	    "python Deelopdracht2.py -i {input} -t {THREADS} -c {CHUNKS} -o Results/bngsa_nietinfected_{wildcards.sample}.fastq"
+	    "python {os.path.join(SCRIPTS, Deelopdracht2.py} -i {input} -t {THREADS} -c {CHUNKS} -o Results/bngsa_nietinfected_{wildcards.sample}.fastq"
 
 rule Trimmer_step2:
     input:
@@ -35,7 +39,7 @@ rule Trimmer_step2:
         "Results/bngsa_nietinfected_1_trimmed.fastq",
         "Results/bngsa_nietinfected_2_trimmed.fastq",
     shell:
-	    "python RemoveReads.py -i {input.bad1} {input.bad2}"
+	    "python {os.path.join(SCRIPTS, RemoveReads.py} -i {input.bad1} {input.bad2}"
 
 rule QC_Trim:
     input:
@@ -43,4 +47,4 @@ rule QC_Trim:
     output:
         "Results/bngsa_nietinfected_{sample}_trimmed.QC"
     shell:
-        "python DeelOpdracht1.py -i {input} -t {THREADS} -c {CHUNKS} -o {output}"
+        "python {os.path.join(SCRIPTS, DeelOpdracht1.py} -i {input} -t {THREADS} -c {CHUNKS} -o {output}"
