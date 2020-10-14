@@ -5,8 +5,8 @@ CHUNKS = 3_000_000
 rule all:
     input:
         expand("Results/bngsa_nietinfected_{sample}.QC", sample = [1, 2])
-        expand("Results/bngsa_nietinfected_{sample}_trimmed.fastq", sample = [1, 2])
-        expand("Results/bngsa_nietinfected_{sample}_trimmed.QC", sample = [1, 2])
+        "Results/bngsa_nietinfected_{sample}_trimmed.fastq"
+        "Results/bngsa_nietinfected_{sample}_trimmed.QC"
 
 rule QC_no_Trim:
     input:
