@@ -14,7 +14,7 @@ rule QC_no_Trim:
     output:
         "Results/bngsa_nietinfected_{sample}.QC"
     shell:
-        "python DeelOpdracht1.py -i {input} -t {THREADS} -c {CHUNKS} -o {output}"  
+        "python DeelOpdracht1.py -i {input} -t {THREADS} -c {CHUNKS} -o {output}"
 
 rule Trimmer_step1:
     input:
