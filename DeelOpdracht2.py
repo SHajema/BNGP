@@ -174,13 +174,9 @@ def main(args):
 
 
 if __name__ == '__main__':
-    start = time.perf_counter()
     args = parse_args()
     if not args.inputfile:
         args.inputfile = 'Input/testbestand_paired_rv.fastq'
-    args.outputfile = 'testbestand_paired_rv.fastq'
+
     main(args)
 
-    final = time.perf_counter()
-
-    print(f'Program finished in {final-start:.2f} second(s)')
