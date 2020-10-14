@@ -28,4 +28,4 @@ rule QC_Trim:
     input:
         "Results/bngsa_nietinfected_{sample}_trimmed.fastq"
     output:
-        "Results/bngsa_nietinfected_{sample}_trimmed.qc"
+        "Results/bngsa_nietinfected_{sample}_trimmed.QC"
