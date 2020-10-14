@@ -14,18 +14,18 @@ rule all:
 
 rule QC_no_Trim:
     input:
-        "/exports/bngp_data/reads/bngsa_nietinfected_{sample}.fastq"
+        "/exports/bngp_data/reads/bngsa_nietinfected_{sample}.fastq",
     output:
-        "Results/bngsa_nietinfected_{sample}.QC"
+        "Results/bngsa_nietinfected_{sample}.QC",
     shell:
-        "python {SCRIPTS}'DeelOpdracht1.py' -i {input} -t {THREADS} -c {CHUNKS} -o {output}"
+        "python {SCRIPTS}DeelOpdracht1.py -i {input} -t {THREADS} -c {CHUNKS} -o {output}"
 
 rule Trimmer_step1:
     input:
-        "/exports/bngp_data/reads/bngsa_nietinfected_{sample}.fastq"
+        "/exports/bngp_data/reads/bngsa_nietinfected_{sample}.fastq",
     output:
         "Results/bngsa_nietinfected_{sample}_good.fastq",
-        "Results/bngsa_nietinfected_{sample}_bad.fastq"
+        "Results/bngsa_nietinfected_{sample}_bad.fastq",
     shell:
 	    "python {SCRIPTS}Deelopdracht2.py -i {input} -t {THREADS} -c {CHUNKS} -o Results/bngsa_nietinfected_{wildcards.sample}.fastq"
 
@@ -43,8 +43,8 @@ rule Trimmer_step2:
 
 rule QC_Trim:
     input:
-        "Results/bngsa_nietinfected_{sample}_trimmed.fastq"
+        "Results/bngsa_nietinfected_{sample}_trimmed.fastq",
     output:
-        "Results/bngsa_nietinfected_{sample}_trimmed.QC"
+        "Results/bngsa_nietinfected_{sample}_trimmed.QC",
     shell:
         "python {SCRIPTS}DeelOpdracht1.py -i {input} -t {THREADS} -c {CHUNKS} -o {output}"
