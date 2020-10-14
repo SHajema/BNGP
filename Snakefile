@@ -23,7 +23,7 @@ rule Trimmer_step1:
         "Results/bngsa_nietinfected_{sample}_good.fastq",
         "Results/bngsa_nietinfected_{sample}_bad.fastq"
     shell:
-	    "python Deelopdracht2.py -i  {input} -t {THREADS} -c {CHUNKS} -o Results/bngsa_nietinfected_{sample}.fastq"
+	    "python Deelopdracht2.py -i {input} -t {THREADS} -c {CHUNKS} -o Results/bngsa_nietinfected_{sample}.fastq"
 
 rule Trimmer_step2:
     input:
