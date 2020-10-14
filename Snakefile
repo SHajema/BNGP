@@ -10,7 +10,7 @@ rule all:
 
 rule QC_no_Trim:
     input:
-        SAMPLES
+        "/exports/bngp_data/reads/bngsa_nietinfected_{sample}.fastq"
     output:
         "Results/bngsa_nietinfected_{sample}.QC"
     shell:
@@ -18,7 +18,7 @@ rule QC_no_Trim:
 
 rule Trimmer:
     input:
-        SAMPLES
+        "/exports/bngp_data/reads/bngsa_nietinfected_{sample}.fastq"
     output:
         "Results/bngsa_nietinfected_{sample}_trimmed.fastq"
     shell:
@@ -26,6 +26,6 @@ rule Trimmer:
 
 rule QC_Trim:
     input:
-        rules.Trimmer.output
+        "Results/bngsa_nietinfected_{sample}_trimmed.fastq"
     output:
         "Results/bngsa_nietinfected_{sample}_trimmed.qc"
