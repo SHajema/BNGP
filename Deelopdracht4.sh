@@ -5,7 +5,7 @@ usage() { echo "$0 usage: " && grep "[[:space:]].)\ #" $0 | sed 's/#//' | sed -r
 while getopts r:d:t:h flag
 do
     case "${flag}" in
-        r) ref_location=${OPTARG];;
+        r) ref_location=${OPTARG};;
         d) dir_location=${OPTARG};;
         t) threads=${OPTARG};;
         h | *)
@@ -18,7 +18,5 @@ done
 echo "ref_location = ${ref_location}"
 echo "dir_location = ${dir_location}"
 echo "threads = ${threads}"
-echo "help = ${help}"
 
-bowtie2-build ${ref_location} ${dir_location} -t {threads}
-
+bowtie2-build ${ref_location} ${dir_location} -t ${threads}
