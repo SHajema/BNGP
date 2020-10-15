@@ -20,4 +20,5 @@ echo "dir_location = ${dir_location}"
 echo "threads = ${threads}"
 echo "help = ${help}"
 
-bowtie2-build /exports/bngp_data/refgenome/lclav_genome.fa /exports/bngp_home/Results/Genome/bngsa -t 4
+bowtie2-build ${ref_location} ${dir_location} -t {threads}
+
