@@ -1,6 +1,7 @@
 #!/usr/bin/env bash
 
 usage() { echo "$0 usage: " && grep "[[:space:]].)\ #" $0 | sed 's/#//' | sed -r 's/([a-z])\)/-\1/'; exit 0; }
+[ $# -eq 0 ] && usage
 
 while getopts hr:d:t: flag
 do
