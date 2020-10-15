@@ -68,7 +68,7 @@ def parse_args():
 
 
 def write_out_bad(path, data):
-    print(f"\nWriting bad sequence IDs to: {path}...")
+    print(f"Writing bad sequence IDs to: {path}...")
     write_string = ""
 
     with open(path, 'a+') as f:
@@ -77,15 +77,15 @@ def write_out_bad(path, data):
             if x % 1_000_000 == 0 and x != 0:
                 f.write(write_string)
                 write_string = ""
-                print(f"Wrote {x} good reads to: {path}.")
+                print(f"Wrote {x}   bad read IDs to: {path}.")
         if write_string != "":
             f.write(write_string)
 
-    return f"Completed! Wrote {len(data)} bad Read IDs to: {path}\n"
+    return f"Completed! Wrote {len(data)} bad Read IDs to: {path}"
 
 
 def write_file(path, data):
-    print(f"\nWriting correct sequences to: {path}...")
+    print(f"Writing correct sequences to: {path}...")
     write_string = ""
 
     with open(path, 'a+') as f:
@@ -94,10 +94,10 @@ def write_file(path, data):
             if x % (1_000_000 * 3) == 0 and x != 0:
                 f.write(write_string)
                 write_string = ""
-                print(f"Wrote {x//3} bad read IDs to: {path}.")
+                print(f"Wrote {x//3} good reads to: {path}.")
         if write_string != "":
             f.write(write_string)
-    return f"Completed! Wrote {len(data)/3} sequences to: {path}\n"
+    return f"Completed! Wrote {len(data)//3} sequences to: {path}\n"
 
 
 def create_intlist(reads_num, threads):
@@ -149,7 +149,7 @@ def file_processing(file):
                 lines = []
             if count != 0 and count % (args.chunks * 4) == 0:
                 main_processing(args, reads)
-                print(f'Processed {count // 4} reads')
+                print(f'\nProcessed {count // 4} reads\n')
                 reads = []
             lines.append(line.rstrip())
 
@@ -157,7 +157,7 @@ def file_processing(file):
         count += 1
         reads += lines[0], lines[1], lines[3]
         main_processing(args, reads)
-        print(f'Processed {count // 4} reads')
+        print(f'\nProcessed {count // 4} reads\n')
     return
 
 
