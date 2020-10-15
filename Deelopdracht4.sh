@@ -2,7 +2,7 @@
 
 usage() { echo "$0 usage: " && grep "[[:space:]].)\ #" $0 | sed 's/#//' | sed -r 's/([a-z])\)/-\1/'; exit 0; }
 
-while getopts r:d:t:h flag
+while getopts hr:d:t: flag
 do
     case "${flag}" in
         r) ref_location=${OPTARG};;
