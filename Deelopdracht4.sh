@@ -19,4 +19,4 @@ echo "ref_location = ${ref_location}"
 echo "dir_location = ${dir_location}"
 echo "threads = ${threads}"
 
-bowtie2-build ${ref_location} ${dir_location} -t ${threads}
+bowtie2-build ${ref_location} ${dir_location} --threads ${threads}
