@@ -30,12 +30,18 @@ do
     esac
 done
 
-echo "ref_location = ${ref_location}"
-echo "dir_location = ${dir_location}"
-echo "threads = ${threads}"
+echo ""
+echo "Using ${ref_location} to create index files..."
 
 #Indexing Reference genome
 bowtie2-build ${ref_location} ${dir_location} --threads ${threads}
 
+echo ""
+echo "Building index files completed!"
+echo ""
+echo "Creating a Alignment file at ${dir_location}_Aligned.SAM..."
+
 #Aligning reads to indexed Genome
-bowtie2 -x ${dir_location} --threads ${threads} -1 ${read1} -2 ${read2} -S {dir_location}"_Aligned.SAM"
+bowtie2 -x ${dir_location} --threads ${threads} -1 ${read1} -2 ${read2} -S ${dir_location}"_Aligned.SAM"
+
+echo ""
