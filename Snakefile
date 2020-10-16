@@ -11,6 +11,7 @@ rule all:
         expand("Results/bngsa_nietinfected_{sample}.QC", sample = ['1', '2']),
         expand("Results/bngsa_nietinfected_{sample}_trimmed.fastq", sample = ['1', '2']),
         expand("Results/bngsa_nietinfected_{sample}_trimmed.QC", sample = ['1', '2']),
+        "Results/Genome/Ref_Genome_Aligned.SAM"
 
 rule QC_no_Trim:
     input:
