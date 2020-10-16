@@ -9,15 +9,15 @@ CHUNKS = 3_000_000
 
 rule all:
     input:
-        expand("Results/bngsa_nietinfected_{sample}.QC", sample = ['1', '2']),
-        expand("Results/bngsa_nietinfected_{sample}_trimmed.fastq", sample = ['1', '2']),
-        expand("Results/bngsa_nietinfected_{sample}_trimmed.QC", sample = ['1', '2']),
+        expand("{OUTDIR}bngsa_nietinfected_{sample}.QC", sample = ['1', '2']),
+        expand("{OUTDIR}bngsa_nietinfected_{sample}_trimmed.fastq", sample = ['1', '2']),
+        expand("{OUTDIR}bngsa_nietinfected_{sample}_trimmed.QC", sample = ['1', '2']),
 
 rule QC_no_Trim:
     input:
         "/exports/bngp_data/reads/bngsa_nietinfected_{sample}.fastq",
     output:
-        "Results/bngsa_nietinfected_{sample}.QC",
+        "{OUTDIR}bngsa_nietinfected_{sample}.QC",
     shell:
         "python {SCRIPTS}DeelOpdracht1.py -i {input} -t {THREADS} -c {CHUNKS} -o {output}"
 
@@ -25,8 +25,8 @@ rule Trimmer_step1:
     input:
         "/exports/bngp_data/reads/bngsa_nietinfected_{sample}.fastq",
     output:
-        "Results/bngsa_nietinfected_{sample}_good.fastq",
-        "Results/bngsa_nietinfected_{sample}_bad.fastq",
+        "{OUTDIR}bngsa_nietinfected_{sample}_good.fastq",
+        "{OUTDIR}bngsa_nietinfected_{sample}_bad.fastq",
     shell:
 	    "python {SCRIPTS}DeelOpdracht2.py -i {input} -t {THREADS} -c {CHUNKS} -o {OUTDIR}bngsa_nietinfected_{wildcards.sample}.fastq"
 
