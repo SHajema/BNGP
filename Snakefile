@@ -58,4 +58,4 @@ rule IndexAlign:
     output:
         "Results/Genome/Ref_Genome_Aligned.SAM"
     shell:
-        "python {SCRIPTS}DeelOpdracht4.sh -r {REFGEN} -d Results/Genome/Ref_Genome -t {THREADS} -1 {input.r1} -2 {input.r2}"
+        "bash {SCRIPTS}DeelOpdracht4.sh -r {REFGEN} -d Results/Genome/Ref_Genome -t {THREADS} -1 {input.r1} -2 {input.r2}"
