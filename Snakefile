@@ -2,6 +2,7 @@ import os
 
 SAMPLES = ["/exports/bngp_data/reads/bngsa_nietinfected_1.fastq", "/exports/bngp_data/reads/bngsa_nietinfected_2.fastq"]
 SCRIPTS = "/exports/bngp_home/BNGP/"
+REFGEN = "/exports/bngp_data/refgenome/lclav_genome.fa"
 THREADS = 4
 CHUNKS = 3_000_000
 
@@ -52,9 +53,9 @@ rule QC_Trim:
 
 rule IndexAlign:
     input:
-        "Results/bngsa_nietinfected_1_trimmed.fastq",
-        "Results/bngsa_nietinfected_2_trimmed.fastq",
+        r1 = "Results/bngsa_nietinfected_1_trimmed.fastq",
+        r2 = "Results/bngsa_nietinfected_2_trimmed.fastq",
     output:
         "Results/Genome/Ref_Genome_Aligned.SAM"
     shell:
-        "python {SCRIPTS}DeelOpdracht4.sh -r {} -d {}"
+        "python {SCRIPTS}DeelOpdracht4.sh -r {REFGEN} -d Results/Genome/Ref_Genome -t {THREADS} -1 {input.r1} -2 {input.r2}"
