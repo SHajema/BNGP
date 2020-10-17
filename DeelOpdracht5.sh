@@ -10,7 +10,7 @@ exit 0;
 }
 [ $# -eq 0 ] && usage
 
-while getopts hs:b:t:1:2: flag
+while getopts hs:b:t: flag
 do
     case "${flag}" in
         s) # Specify the location of the SAM file
@@ -19,10 +19,6 @@ do
           BAMFILE=${OPTARG};;
         t) # Specify the amount of threads to use
           threads=${OPTARG};;
-        1) # The R1 file to use for Alignment
-          read1=${OPTARG};;
-        2) # The R2 file to use for Alignment
-          read2=${OPTARG};;
         h | *) # Show help information
           usage
           exit 0
@@ -30,21 +26,30 @@ do
     esac
 done
 
-BAMFILE = echo "${}"
+BASENAME=${SAMFILE%.SAM}
+BAMFILE=${BASENAME}'.BAM'
+SORTED_BAM=${BASENAME}'_sorted.BAM'
+PILEUP=${BASENAME}'_pileup.mpileup'
+
 
 echo ""
 echo "Creating BAM file from ${SAMFILE}"
 
 #Indexing Reference genome
-samtools view -bT ${SAM_FILE} > ${BAMFILE}
+samtools view --threads ${threads} -b ${SAM_FILE} > ${BAMFILE}
 
 echo ""
 echo "${BAMFILE} created!"
 
 echo ""
-echo "Creating a Alignment file at ${dir_location}_Aligned.SAM..."
+echo "Creating sorted BAM file at ${SORTED_BAM}"
 
-#Aligning reads to indexed Genome
-bowtie2 -x ${dir_location} --threads ${threads} -1 ${read1} -2 ${read2} -S ${dir_location}"_Aligned.SAM"
+samtools sort --threads ${threads} ${BAMFILE} -o ${SORTED_BAM}
 
 echo ""
+echo "${SORTED_BAM} created!"
+
+echo ""
+echo "Creating Pileup file at ${PILEUP}"
+
+samtools mpileup
