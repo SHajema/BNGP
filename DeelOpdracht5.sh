@@ -10,9 +10,11 @@ exit 0;
 }
 [ $# -eq 0 ] && usage
 
-while getopts hs:b:t: flag
+while getopts hr:s:b:t: flag
 do
     case "${flag}" in
+        r) # Specify the location of the reference Genome
+          REF_GENOME=${OPTARG};;
         s) # Specify the location of the SAM file
           SAMFILE=${OPTARG};;
         b) # Specify the path + name of the output BAM file
@@ -51,5 +53,19 @@ echo "${SORTED_BAM} created!"
 
 echo ""
 echo "Creating Pileup file at ${PILEUP}"
+echo "Temporarily copying the reference genome since write permission is needed for mpileup"
 
-samtools mpileup
+cp ${ref_genome} ./
+
+samtools mpileup -f ${REF_GENOME##*/} ${SORTED_BAM} -o ${BASENAME}'.mpileup'
+
+echo "Pileup file created!"
+
+echo ''
+echo "Creating BCF file from ${BASENAME}.mpileup"
+
+bcftools call --threads ${threads} -mv -Ob ${BASENAME}'.mpileup' -o ${BASENAME}'.BCF'
+
+echo ''
+echo 'BCF file created at ${BASENAME}".BCF"'
+
