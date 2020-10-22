@@ -48,3 +48,7 @@ bcftools consensus -f ${REF_GENOME} ${GZ_FILE} -o ${FASTA_FILE}
 
 echo ""
 echo "Consensus fasta created at: ${FASTA_FILE}"
+echo ""
+echo "Removing extra files"
+
+rm ${GZ_FILE} ${GZ_FILE}'.csi' ${}

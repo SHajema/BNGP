@@ -39,7 +39,7 @@ echo ""
 echo "Creating Pileup file at ${PILEUP}"
 echo "Temporarily copying the reference genome since write permission is needed for BAM conversion and mpileup"
 
-cp ${ref_genome} ./
+cp ${REF_GENOME} ./
 
 echo ""
 echo "Creating BAM file from ${SAMFILE}"
@@ -73,3 +73,7 @@ bcftools convert --threads ${threads} -Ov ${BCF_FILE} -o ${VCF_FILE}
 
 echo ''
 echo 'VCF file created at ${VCF_FILE}'
+echo ""
+echo "Removing extra files:"
+
+rm ${REF_GENOME##*/} ${REF_GENOME##*/}'.fai'

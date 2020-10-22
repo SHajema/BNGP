@@ -42,6 +42,6 @@ echo ""
 echo "Creating a Alignment file at ${dir_location}_Aligned.SAM..."
 
 #Aligning reads to indexed Genome
-bowtie2 -x ${dir_location} --threads ${threads} -1 ${read1} -2 ${read2} -S ${dir_location}"_Aligned.SAM"
+bowtie2 -x ${dir_location} --threads ${threads} -1 ${read1} -2 ${read2} -S ${dir_location}".SAM"
 
 echo ""
