@@ -10,7 +10,7 @@ exit 0;
 }
 [ $# -eq 0 ] && usage
 
-while getopts hr:d:t:1:2: flag
+while getopts hr:d:t:s:1:2: flag
 do
     case "${flag}" in
         r) # Specify the location of the Reference genome
@@ -19,6 +19,8 @@ do
           dir_location=${OPTARG};;
         t) # Specify the amount of threads to use
           threads=${OPTARG};;
+        s) # Specify the path of the SAM output file
+          SAM_FILE=${OPTARG};;
         1) # The R1 file to use for Alignment
           read1=${OPTARG};;
         2) # The R2 file to use for Alignment
@@ -42,6 +44,6 @@ echo ""
 echo "Creating a Alignment file at ${dir_location}_Aligned.SAM..."
 
 #Aligning reads to indexed Genome
-bowtie2 -x ${dir_location} --threads ${threads} -1 ${read1} -2 ${read2} -S ${dir_location}".SAM"
+bowtie2 -x ${dir_location} --threads ${threads} -1 ${read1} -2 ${read2} -S ${SAM_FILE}
 
 echo ""

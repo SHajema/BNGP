@@ -63,7 +63,7 @@ rule IndexAlign:
     output:
         "Results/Variants/bngsa_sample.SAM"
     shell:
-        "bash {SCRIPTS}DeelOpdracht4.sh -r {REFGEN} -d Results/Variants/bngsa_sample -t {THREADS} -1 {input.r1} -2 {input.r2}"
+        "bash {SCRIPTS}DeelOpdracht4.sh -r {REFGEN} -d Results/Genome/bngsa_sample -s {output} -t {THREADS} -1 {input.r1} -2 {input.r2}"
 
 rule VCF_creation:
     input:
