@@ -12,7 +12,12 @@ rule all:
         expand("Results/bngsa_nietinfected_{sample}.QC", sample = ['1', '2']),
         expand("Results/bngsa_nietinfected_{sample}_trimmed.fastq", sample = ['1', '2']),
         expand("Results/bngsa_nietinfected_{sample}_trimmed.QC", sample = ['1', '2']),
-        "Results/Genome/Ref_Genome_Aligned.SAM"
+        "Results/Variants/bngsa_sample.BAM",
+        "Results/Variants/bngsa_sample.BCF",
+        "Results/Variants/bngsa_sample.VCF",
+        "Results/Variants/bngsa_sample.mpileup",
+        "Results/Variants/bngsa_sample_sorted.BAM",
+        "Results/bngsa_consensus.fasta"
 
 rule QC_no_Trim:
     input:
