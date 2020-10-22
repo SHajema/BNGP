@@ -28,17 +28,23 @@ do
     esac
 done
 
-BASENAME=${SAMFILE%.SAM}
-BAMFILE=${BASENAME}'.BAM'
+BASENAME=${BAMFILE%.BAM}
 SORTED_BAM=${BASENAME}'_sorted.BAM'
-PILEUP=${BASENAME}'_pileup.mpileup'
+PILEUP=${BASENAME}'.mpileup'
+BCF_FILE=${BASENAME}'.BCF'
+VCF_FILE=${BASENAME}'.VCF'
 
+
+echo ""
+echo "Creating Pileup file at ${PILEUP}"
+echo "Temporarily copying the reference genome since write permission is needed for BAM conversion and mpileup"
+
+cp ${ref_genome} ./
 
 echo ""
 echo "Creating BAM file from ${SAMFILE}"
 
-#Indexing Reference genome
-samtools view --threads ${threads} -b ${SAM_FILE} > ${BAMFILE}
+samtools view --threads ${threads} -bT ${REF_GENOME##*/} ${SAM_FILE} -o ${BAMFILE}
 
 echo ""
 echo "${BAMFILE} created!"
@@ -51,21 +57,19 @@ samtools sort --threads ${threads} ${BAMFILE} -o ${SORTED_BAM}
 echo ""
 echo "${SORTED_BAM} created!"
 
-echo ""
-echo "Creating Pileup file at ${PILEUP}"
-echo "Temporarily copying the reference genome since write permission is needed for mpileup"
-
-cp ${ref_genome} ./
-
-samtools mpileup -f ${REF_GENOME##*/} ${SORTED_BAM} -o ${BASENAME}'.mpileup'
+samtools mpileup -uf ${REF_GENOME##*/} ${SORTED_BAM} -o ${PILEUP}
 
 echo "Pileup file created!"
 
 echo ''
-echo "Creating BCF file from ${BASENAME}.mpileup"
+echo "Creating BCF file from ${PILEUP}"
 
-bcftools call --threads ${threads} -mv -Ob ${BASENAME}'.mpileup' -o ${BASENAME}'.BCF'
+bcftools call --threads ${threads} -mv -Ob ${PILEUP} -o ${BCF_FILE}
 
 echo ''
-echo 'BCF file created at ${BASENAME}".BCF"'
+echo 'BCF file created at ${BCF_FILE}'
 
+bcftools convert --threads ${threads} -Ov ${BCF_FILE} -o ${VCF_FILE}
+
+echo ''
+echo 'VCF file created at ${VCF_FILE}'
