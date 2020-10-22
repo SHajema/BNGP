@@ -56,6 +56,26 @@ rule IndexAlign:
         r1 = "Results/bngsa_nietinfected_1_trimmed.fastq",
         r2 = "Results/bngsa_nietinfected_2_trimmed.fastq",
     output:
-        "Results/Genome/Ref_Genome_Aligned.SAM"
+        "Results/Variants/bngsa_sample.SAM"
     shell:
-        "bash {SCRIPTS}DeelOpdracht4.sh -r {REFGEN} -d Results/Genome/Ref_Genome -t {THREADS} -1 {input.r1} -2 {input.r2}"
+        "bash {SCRIPTS}DeelOpdracht4.sh -r {REFGEN} -d Results/Variants/bngsa_sample -t {THREADS} -1 {input.r1} -2 {input.r2}"
+
+rule VCF_creation:
+    input:
+        "Results/Variants/bngsa_sample.SAM"
+    output:
+        a="Results/Variants/bngsa_sample.BAM",
+        b="Results/Variants/bngsa_sample.BCF",
+        c="Results/Variants/bngsa_sample.VCF",
+        d="Results/Variants/bngsa_sample.mpileup",
+        e="Results/Variants/bngsa_sample_sorted.BAM",
+    shell:
+        'bash {SCRIPTS}DeelOpdracht5_VCF.sh  -r {REFGEN} -s {input} -b {output.a} -t {THREADS}'
+
+rule Consensus_creation:
+    input:
+        "Results/Variants/bngsa_sample.VCF"
+    output:
+        "Results/bngsa_consensus.fasta"
+    shell:
+        'bash {SCRIPTS}DeelOpdracht5_Consensus.sh  -r {REFGEN} -v {input} -f {output} -t {THREADS}'

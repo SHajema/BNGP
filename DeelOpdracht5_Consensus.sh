@@ -17,7 +17,7 @@ do
           REF_GENOME=${OPTARG};;
         v) # Specify the location of the VCF file
           VCF_FILE=${OPTARG};;
-        f) # Specify the path of the fasta output name
+        f) # Specify the path of the fasta output file
           FASTA_FILE=${OPTARG};;
         t) # Specify the amount of threads to use
           threads=${OPTARG};;
