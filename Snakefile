@@ -61,9 +61,10 @@ rule IndexAlign:
         r1 = "Results/bngsa_nietinfected_1_trimmed.fastq",
         r2 = "Results/bngsa_nietinfected_2_trimmed.fastq",
     output:
-        "Results/Variants/bngsa_sample.SAM"
+        a="Results/Variants/bngsa_sample.SAM",
+        b="Results/Genome/bngsa_sample.1.bt2"
     shell:
-        "bash {SCRIPTS}DeelOpdracht4.sh -r {REFGEN} -d Results/Genome/bngsa_sample -s {output} -t {THREADS} -1 {input.r1} -2 {input.r2}"
+        "bash {SCRIPTS}DeelOpdracht4.sh -r {REFGEN} -d Results/Genome/bngsa_sample -s {output.a} -t {THREADS} -1 {input.r1} -2 {input.r2}"
 
 rule VCF_creation:
     input:
