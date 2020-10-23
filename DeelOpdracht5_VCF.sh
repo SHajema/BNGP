@@ -44,6 +44,7 @@ cp ${REF_GENOME} ./
 echo ""
 echo "Creating BAM file from ${SAMFILE}"
 
+echo "samtools view --threads ${threads} -bT ${REF_GENOME##*/} ${SAM_FILE} -o ${BAMFILE}"
 samtools view --threads ${threads} -bT ${REF_GENOME##*/} ${SAM_FILE} -o ${BAMFILE}
 
 echo ""
