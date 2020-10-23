@@ -51,4 +51,4 @@ echo "Consensus fasta created at: ${FASTA_FILE}"
 echo ""
 echo "Removing extra files"
 
-rm ${GZ_FILE} ${GZ_FILE}'.csi' ${}
+rm ${GZ_FILE} ${GZ_FILE}'.csi'
