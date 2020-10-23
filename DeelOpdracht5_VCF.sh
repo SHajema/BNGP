@@ -33,7 +33,7 @@ SORTED_BAM=${BASENAME}'_sorted.BAM'
 PILEUP=${BASENAME}'.mpileup'
 BCF_FILE=${BASENAME}'.BCF'
 VCF_FILE=${BASENAME}'.VCF'
-
+GENOME_LOCATION=${BAMFILE%/*}'/'${REF_GENOME##*/}
 
 echo ""
 echo "Creating Pileup file at ${PILEUP}"
@@ -44,8 +44,7 @@ cp ${REF_GENOME} ${BAMFILE%/*}'/'
 echo ""
 echo "Creating BAM file from ${SAMFILE}"
 
-echo "samtools view --threads ${threads} -bT ${REF_GENOME##*/} ${SAMFILE} -o ${BAMFILE}"
-samtools view --threads ${threads} -bT ${REF_GENOME##*/} ${SAMFILE} -o ${BAMFILE}
+samtools view --threads ${threads} -bT ${GENOME_LOCATION} ${SAMFILE} -o ${BAMFILE}
 
 echo ""
 echo "${BAMFILE} created!"
@@ -58,7 +57,7 @@ samtools sort --threads ${threads} ${BAMFILE} -o ${SORTED_BAM}
 echo ""
 echo "${SORTED_BAM} created!"
 
-samtools mpileup -uf ${REF_GENOME##*/} ${SORTED_BAM} -o ${PILEUP}
+samtools mpileup -uf ${GENOME_LOCATION} ${SORTED_BAM} -o ${PILEUP}
 
 echo "Pileup file created!"
 
@@ -77,4 +76,4 @@ echo 'VCF file created at ${VCF_FILE}'
 echo ""
 echo "Removing extra files:"
 
-rm ${REF_GENOME##*/} ${REF_GENOME##*/}'.fai'
+rm ${GENOME_LOCATION} ${GENOME_LOCATION}'.fai'
