@@ -17,7 +17,8 @@ rule all:
         "Results/Variants/bngsa_sample.VCF",
         "Results/Variants/bngsa_sample.mpileup",
         "Results/Variants/bngsa_sample_sorted.BAM",
-        "Results/bngsa_consensus.fasta"
+        "Results/bngsa_consensus.fasta",
+        "Results/Genome/bngsa_sample.1.bt2"
 
 rule QC_no_Trim:
     input:
