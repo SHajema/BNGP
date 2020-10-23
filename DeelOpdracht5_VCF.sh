@@ -39,7 +39,7 @@ echo ""
 echo "Creating Pileup file at ${PILEUP}"
 echo "Temporarily copying the reference genome since write permission is needed for BAM conversion and mpileup"
 
-cp ${REF_GENOME} ./
+cp ${REF_GENOME} ${BAMFILE%/*}'/'
 
 echo ""
 echo "Creating BAM file from ${SAMFILE}"
