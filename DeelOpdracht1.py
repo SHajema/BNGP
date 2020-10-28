@@ -4,15 +4,17 @@ import argparse
 
 
 def parse_args():
-    parser = argparse.ArgumentParser()
-    parser.add_argument('-i', '--inputfile', type=str, required=True,
-                        help='The file you wish to use as input for the program.')
-    parser.add_argument('-o', '--outputfile', type=str, default="Result.txt",
-                        help='Give the name of the outputfile')
-    parser.add_argument('-t', '--threads', type=int, default=4,
+    parser = argparse.ArgumentParser(
+        description='Function: Create a quality report of the given inputfile in the outputfile.',
+        epilog='Usage Example:\npython DeelOpdracht1.py -i sample_1.fastq -o sample_1.QC -t 4 -c 1000000')
+    parser.add_argument('-i', '--inputfile', metavar='', type=str, required=True,
+                        help='The file you wish to use as input for the program. In FASTQ format.')
+    parser.add_argument('-o', '--outputfile', metavar='', type=str, default="Result.txt",
+                        help='The file you wish to use as output for the program.')
+    parser.add_argument('-t', '--threads', metavar='', type=int, default=4,
                         help='Give the number of threads you would like to use.')
-    parser.add_argument('-c', '--chunks', type=int,
-                        default=10_000_000, help='Give the number of reads you wish to process at the same time.')
+    parser.add_argument('-c', '--chunks', metavar='', type=int, default=10_000_000,
+                        help='Give the number of reads you wish to process at the same time.')
     args = parser.parse_args()
     return args
 
