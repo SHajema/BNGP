@@ -4,7 +4,7 @@ import os
 
 def parse_args():
     parser = argparse.ArgumentParser()
-    parser.add_argument('-i', '--inputfiles', metavar='File', type=str, nargs=2, required=False,
+    parser.add_argument('-i', '--inputfiles', type=str, nargs=2, required=False,
                         help='The file you wish to use as input for the program.')
     args = parser.parse_args()
     return args

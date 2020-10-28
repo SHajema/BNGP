@@ -3,9 +3,9 @@ import argparse
 
 def parse_args():
     parser = argparse.ArgumentParser()
-    parser.add_argument('-i', '--inputfile', metavar='File', type=str, required=False,
+    parser.add_argument('-i', '--inputfile', type=str, required=False,
                         help='The file you wish to use as input for the program.')
-    parser.add_argument('-o', '--outputfile', metavar='File', type=str, default="Variants.txt",
+    parser.add_argument('-o', '--outputfile', type=str, default="Variants.txt",
                         help='Use this to select an name for the output file')
     args = parser.parse_args()
     return args

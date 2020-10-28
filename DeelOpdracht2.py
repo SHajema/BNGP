@@ -1,6 +1,19 @@
-import time
 import concurrent.futures
 import argparse
+
+
+def parse_args():
+    parser = argparse.ArgumentParser()
+    parser.add_argument('-i', '--inputfile', type=str, required=False,
+                        help='The file you wish to use as input for the program.')
+    parser.add_argument('-o', '--outputfile', type=str, default="Trimmed_file.txt",
+                        help='Use this to select an name for the output file')
+    parser.add_argument('-t', '--threads', type=int, default=4,
+                        help='Give the number of threads you would like to use.')
+    parser.add_argument('-c', '--chunks', type=int, default=2_000,
+                        help='Give the number of reads you wish to process at the same time.')
+    args = parser.parse_args()
+    return args
 
 
 def trim_read(read):
@@ -46,27 +59,6 @@ def seperate_reads(read_list):
     return good_reads, bad_reads
 
 
-def run_thread(pos, lines):
-    for x in range(0, len(lines), 3):
-        lines[x:x+3] = trim_read(lines[x:x+3])
-    good_reads, bad_reads = seperate_reads(lines)
-    return [pos, good_reads, bad_reads]
-
-
-def parse_args():
-    parser = argparse.ArgumentParser()
-    parser.add_argument('-i', '--inputfile', metavar='File', type=str, required=False,
-                        help='The file you wish to use as input for the program.')
-    parser.add_argument('-o', '--outputfile', metavar='Directory', type=str, default="Trimmed_file.txt",
-                        help='Use this to select an name for the output file')
-    parser.add_argument('-t', '--threads', metavar='number of threads', type=int, default=4,
-                        help='Give the number of threads you would like to use.')
-    parser.add_argument('-c', '--chunks', metavar='number of reads to load into RAM', type=int,
-                        default=2_000, help='Give the number of reads you wish to process at the same time.')
-    args = parser.parse_args()
-    return args
-
-
 def write_out_bad(path, data):
     print(f"Writing bad sequence IDs to: {path}...")
     write_string = ""
@@ -106,6 +98,16 @@ def create_intlist(reads_num, threads):
     return intlist
 
 
+def multi_process(function, intlist, reads):
+    final_results = []
+    with concurrent.futures.ProcessPoolExecutor() as executor:
+        results = [executor.submit(function, x, reads[intlist[x]:intlist[x + 1]]) for x in range(args.threads)]
+    for r in concurrent.futures.as_completed(results):
+        final_results.append(r.result())
+    final_results.sort()
+    return final_results
+
+
 def process_results(final_results):
     good, bad = [], []
 
@@ -117,14 +119,11 @@ def process_results(final_results):
     return good, bad
 
 
-def multi_process(function, intlist, reads):
-    final_results = []
-    with concurrent.futures.ProcessPoolExecutor() as executor:
-        results = [executor.submit(function, x, reads[intlist[x]:intlist[x + 1]]) for x in range(args.threads)]
-    for r in concurrent.futures.as_completed(results):
-        final_results.append(r.result())
-    final_results.sort()
-    return final_results
+def run_thread(pos, lines):
+    for x in range(0, len(lines), 3):
+        lines[x:x+3] = trim_read(lines[x:x+3])
+    good_reads, bad_reads = seperate_reads(lines)
+    return [pos, good_reads, bad_reads]
 
 
 def main_processing(args, reads):

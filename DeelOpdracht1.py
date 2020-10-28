@@ -3,6 +3,20 @@ import concurrent.futures
 import argparse
 
 
+def parse_args():
+    parser = argparse.ArgumentParser()
+    parser.add_argument('-i', '--inputfile', type=str, required=True,
+                        help='The file you wish to use as input for the program.')
+    parser.add_argument('-o', '--outputfile', type=str, default="Result.txt",
+                        help='Give the name of the outputfile')
+    parser.add_argument('-t', '--threads', type=int, default=4,
+                        help='Give the number of threads you would like to use.')
+    parser.add_argument('-c', '--chunks', type=int,
+                        default=10_000_000, help='Give the number of reads you wish to process at the same time.')
+    args = parser.parse_args()
+    return args
+
+
 def read_file(file):
     with open(file, 'r') as f:
         inp = f.read().splitlines()
@@ -123,20 +137,6 @@ def create_result_string(reads_num, result_list):
             f'{(result_list[4][x][1]+result_list[4][x][2])/sum(result_list[4][x])*100:.2f}%\n'
 
     return result_string
-
-
-def parse_args():
-    parser = argparse.ArgumentParser()
-    parser.add_argument('-i', '--inputfile', metavar='File', type=str, required=True,
-                        help='The file you wish to use as input for the program.')
-    parser.add_argument('-o', '--outputfile', metavar='String', type=str, default="Result.txt",
-                        help='Give the name of the outputfile')
-    parser.add_argument('-t', '--threads', metavar='number of threads', type=int, default=4,
-                        help='Give the number of threads you would like to use.')
-    parser.add_argument('-c', '--chunks', metavar='number of reads to load into ram to process', type=int,
-                        default=10_000_000, help='Give the number of reads you wish to process at the same time.')
-    args = parser.parse_args()
-    return args
 
 
 def main_processing(args, reads):
