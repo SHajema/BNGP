@@ -67,12 +67,12 @@ echo "Creating BCF file from ${PILEUP}"
 bcftools call --threads ${threads} -mv -Ob ${PILEUP} -o ${BCF_FILE}
 
 echo ''
-echo 'BCF file created at ${BCF_FILE}'
+echo "BCF file created at ${BCF_FILE}"
 
 bcftools convert --threads ${threads} -Ov ${BCF_FILE} -o ${VCF_FILE}
 
 echo ''
-echo 'VCF file created at ${VCF_FILE}'
+echo "VCF file created at ${VCF_FILE}"
 echo ""
 echo "Removing extra files:"
 

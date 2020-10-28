@@ -1,6 +1,16 @@
 import concurrent.futures
 import argparse
 
+"""
+Het Trimmen van de reads gebeurd in de functie trim_read(), split_seq(), calc_quality_score() en seperate_reads(). Er 
+wordt gebruik gemaakt van een sliding window van 5 bases waarbij er gekeken wordt of er een gemiddelde quality van 20 
+of hoger is. Als deze quality lager is dan gemiddeld 20, zullen de rest van de basen of deze read getrimmed worden. 
+Vervolgens zal er gekeken worden of de reads een lengte van minimaal (default 50) hebben. Als dit niet zo is worden de 
+ID's van deze reads in een apparte file gezet en met het RemoveReads.py script gefiltered uit de andere file.
+
+De reden van default 50 read lenght: https://www.ncbi.nlm.nih.gov/pmc/articles/PMC4226227/ (hoofdstuk 6)
+"""
+
 
 def parse_args():
     parser = argparse.ArgumentParser(
@@ -21,6 +31,14 @@ def parse_args():
 
 
 def trim_read(read):
+    """
+    In deze functie wordt er per read getrimmed. Eerst wordt de helft van de lengte van de sequentie berekend, zodat
+    het trimmen vanaf het midden begint. Vervolgens wordt de achterste helft van de quality string aan de split_seq
+    functie gegeven om de lage quality posititie te bepalen. Vervolgens wordt de sequentie string en quality string tot
+    deze positie (plus de helft) getrimmed. Op dit moment is de achterste helft van de read getrimmed. Daarna wordt de
+    read omgedraaid en word er vanaf het (getrimmde) einde getrimmed, de andere kant op. Zo wordt er eerste de eene kant
+     of getrimmed en daarna de andere kant zodat beide uiteindes op quality getrimmed worden.
+    """
     sequence = read[1]
     quality = read[2]
     length = len(quality)//2
@@ -36,6 +54,11 @@ def trim_read(read):
 
 
 def split_seq(quality):
+    """
+    Hier wordt de quality string van de read gepakt en wordt er met een sliding window van 5 values doorheen gelooped.
+    Dan wordt er voor de values een score berekend met de cal_quality_score functie en als die waarden gemiddeld onder
+    de 20 is zal de lengte van de quality string tot dat punt worden terug gegeven.
+    """
     for x in range(len(quality)-4):
         if calc_quality_score(quality[x:x + 5]):
             return x+4
@@ -43,6 +66,13 @@ def split_seq(quality):
 
 
 def calc_quality_score(values):
+    """
+    Hier worden er scores toegekend aan de 5 values in de huidige sliding window. Van elk van deze waarden wordt de
+    ASCII score berekent (-33 voor Illumina) en dan bij elkaar opgeteld. Als de totale gecombineerde waarde niet boven
+    de 99 is, light de gemiddelde score onder de 20 en wordt het stukje beschouwd als te lage quality. Op dat moment
+    valt gemiddelde zekerheid per base onder de 99%. Dan wordt de waarde False terug gegeven. Anders wordt het stukje
+    read beschouwd als high quality en wordt het value True terug gegeven.
+    """
     score_num = 0
     for x in range(len(values)):
         score_num += ord(values[x])-33
@@ -53,6 +83,11 @@ def calc_quality_score(values):
 
 
 def seperate_reads(read_list, min_read_len):
+    """
+    Hier worden de reads gechecked op lengte. Als de reads korter zijn dan de meegegeven minimale lengte (default: 50)
+    wordt de ID bij de bad_reads lijst gezet. Als de Reads langer zijn wordt het bij de good_reads lijst toegevoegd.
+    Deze worden dan uiteindelijk weggeschreven in de outputfile.
+    """
     good_reads, bad_reads = [], []
 
     for x in range(0, len(read_list), 3):
