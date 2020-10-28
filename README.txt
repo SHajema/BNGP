@@ -17,16 +17,16 @@ snakemake --snakefile Snakefile_s1088987
 snakefile --snakefile Snakefile_s1088987 -d runkoen
 
 Outputfiles of the Pipeline:
-Files:                                                                 Description:
+Files:                                                                Description:
 
 Results directory:
-  Results/bngsa_nietinfected_1.QC                                      QC report of raw inputfile 1
-  Results/bngsa_nietinfected_2.QC                                      QC report of raw inputfile 2
-  Results/bngsa_nietinfected_1_trimmed.fastq                           The Trimmed results of the inputfile 1
-  Results/bngsa_nietinfected_2_trimmed.fastq                           The Trimmed results of the inputfile 1
-  Results/bngsa_nietinfected_1_trimmed.QC                              QC report of the trimmed inputfile 1
-  Results/bngsa_nietinfected_2_trimmed.QC                              QC report of the trimmed inputfile 1
-  Results/bngsa_consensus.fasta                                        The consensus file (in Fasta format) of the given inputfiles
+  Results/bngsa_nietinfected_1.QC                                     QC report of raw inputfile 1
+  Results/bngsa_nietinfected_2.QC                                     QC report of raw inputfile 2
+  Results/bngsa_nietinfected_1_trimmed.fastq                          The Trimmed results of the inputfile 1
+  Results/bngsa_nietinfected_2_trimmed.fastq                          The Trimmed results of the inputfile 1
+  Results/bngsa_nietinfected_1_trimmed.QC                             QC report of the trimmed inputfile 1
+  Results/bngsa_nietinfected_2_trimmed.QC                             QC report of the trimmed inputfile 1
+  Results/bngsa_consensus.fasta                                       The consensus file (in Fasta format) of the given inputfiles
 
 Results/Genome directory:
   Results/Genome/bngsa_sample.[1-4].bt2                               Indexed reference Genome
