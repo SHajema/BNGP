@@ -3,14 +3,18 @@ import argparse
 
 
 def parse_args():
-    parser = argparse.ArgumentParser()
+    parser = argparse.ArgumentParser(
+        description='Function: Trim the low quality reads of given inputfile and write this to the given output file.',
+        epilog='Usage Example: python DeelOpdracht2.py -i sample_1.fastq -o sample_1_trimmed.fastq -t 4 -c 1000000')
     parser.add_argument('-i', '--inputfile', metavar='', type=str, required=False,
                         help='The file you wish to use as input for the program.')
     parser.add_argument('-o', '--outputfile', metavar='', type=str, default="Trimmed_file.txt",
                         help='Use this to select an name for the output file')
-    parser.add_argument('-t', '--threads', metavar='', type=int, default=4,
+    parser.add_argument('-t', '--threads', metavar='', type=int, default=1,
                         help='Give the number of threads you would like to use.')
-    parser.add_argument('-c', '--chunks', metavar='', type=int, default=2_000,
+    parser.add_argument('-l', '--min_read_len', metavar='', type=int, default=50,
+                        help='The minimum length reads should remain after trimming.')
+    parser.add_argument('-c', '--chunks', metavar='', type=int, default=2_000_000,
                         help='Give the number of reads you wish to process at the same time.')
     args = parser.parse_args()
     return args
@@ -48,11 +52,11 @@ def calc_quality_score(values):
         return True
 
 
-def seperate_reads(read_list):
+def seperate_reads(read_list, min_read_len):
     good_reads, bad_reads = [], []
 
     for x in range(0, len(read_list), 3):
-        if len(read_list[x+1]) > 19:
+        if len(read_list[x+1]) >= min_read_len:
             good_reads += read_list[x:x+3]
         else:
             bad_reads.append(read_list[x].split()[0])
@@ -98,10 +102,10 @@ def create_intlist(reads_num, threads):
     return intlist
 
 
-def multi_process(function, intlist, reads):
+def multi_process(function, intlist, reads, min_read_len):
     final_results = []
     with concurrent.futures.ProcessPoolExecutor() as executor:
-        results = [executor.submit(function, x, reads[intlist[x]:intlist[x + 1]]) for x in range(args.threads)]
+        results = [executor.submit(function, x, reads[intlist[x]:intlist[x + 1]], min_read_len) for x in range(args.threads)]
     for r in concurrent.futures.as_completed(results):
         final_results.append(r.result())
     final_results.sort()
@@ -119,10 +123,10 @@ def process_results(final_results):
     return good, bad
 
 
-def run_thread(pos, lines):
+def run_thread(pos, lines, min_read_len):
     for x in range(0, len(lines), 3):
         lines[x:x+3] = trim_read(lines[x:x+3])
-    good_reads, bad_reads = seperate_reads(lines)
+    good_reads, bad_reads = seperate_reads(lines, min_read_len)
     return [pos, good_reads, bad_reads]
 
 
@@ -130,14 +134,14 @@ def main_processing(args, reads):
     reads_num = len(reads)
 
     intlist = create_intlist(reads_num, args.threads)
-    final_results = multi_process(run_thread, intlist, reads)
+    final_results = multi_process(run_thread, intlist, reads, args.min_read_len)
     final_results = process_results(final_results)
 
     print(write_file((args.outputfile.split('.')[0]+"_good.fastq"), final_results[0]))
     print(write_out_bad((args.outputfile.split('.')[0]+"_bad.fastq"), final_results[1]))
 
 
-def file_processing(file):
+def file_processing(args, file):
     print(f'Trimming File: {file}')
     reads, lines = [], []
 
@@ -169,7 +173,7 @@ def clean_file(path):
 def main(args):
     print(clean_file(args.outputfile.split('.')[0] + "_good.fastq"))
     print(clean_file(args.outputfile.split('.')[0] + "_bad.fastq"))
-    file_processing(args.inputfile)
+    file_processing(args, args.inputfile)
 
 
 if __name__ == '__main__':

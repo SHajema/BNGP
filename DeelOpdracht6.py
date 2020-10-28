@@ -2,7 +2,9 @@ import argparse
 
 
 def parse_args():
-    parser = argparse.ArgumentParser()
+    parser = argparse.ArgumentParser(
+        description='Function: Analyse the Variants in the given VCF file and write the results to an output file.',
+        epilog='Usage Example: python DeelOpdracht6.py -i sample_1.VCF -o sample_1_Variants.txt')
     parser.add_argument('-i', '--inputfile', metavar='', type=str, required=False,
                         help='The file you wish to use as input for the program.')
     parser.add_argument('-o', '--outputfile', metavar='', type=str, default="Variants.txt",

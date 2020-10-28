@@ -1,11 +1,11 @@
 #!/usr/bin/env bash
 
 usage() {
-echo "$0 script is used to index the reference Genome and the Align reads onto that indexed Genome."
+echo "Function: $0 script is used to index the reference Genome and the Align reads onto that indexed Genome."
 echo "$0 usage:" && grep "[[:space:]].)\ #" $0 | sed 's/#//' | sed -r 's/([a-z])\)/-\1/';
 echo ""
 echo "Example:"
-echo "$0 -r <path to reference genome> -d <path to directory + basename> -t <number of threads as integer> -1 <path to Read1 file> -2 <path to Read2 file>"
+echo "$0 -r lclav_genome.fa -d Results/Genome/bngsa_sample -t 4 -1 sample1_R1_trimmed.fastq -2 sample1_R2_trimmed.fastq"
 exit 0;
 }
 [ $# -eq 0 ] && usage
@@ -13,7 +13,7 @@ exit 0;
 while getopts hr:d:t:s:1:2: flag
 do
     case "${flag}" in
-        r) # Specify the location of the Reference genome
+        r) # Specify the location of the Reference genome. In Fasta Format
           ref_location=${OPTARG};;
         d) # Specify the location + basename of the output files
           dir_location=${OPTARG};;

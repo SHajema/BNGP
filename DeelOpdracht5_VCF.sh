@@ -1,11 +1,11 @@
 #!/usr/bin/env bash
 
 usage() {
-echo "$0 script is used to index the reference Genome and the Align reads onto that indexed Genome."
+echo "Function: $0 script is used to create a BAM-, sorted BAM-, Pileup-, BCF- and VCF-File from a given SAM file."
 echo "$0 usage:" && grep "[[:space:]].)\ #" $0 | sed 's/#//' | sed -r 's/([a-z])\)/-\1/';
 echo ""
 echo "Example:"
-echo "$0 -r <path to reference genome> -d <path to directory + basename> -t <number of threads as integer> -1 <path to Read1 file> -2 <path to Read2 file>"
+echo "$0 -r lclav_genome.fa -s bngsa_sample.SAM -b Results/Variants/bngsa_sample.BAM -t 4"
 exit 0;
 }
 [ $# -eq 0 ] && usage

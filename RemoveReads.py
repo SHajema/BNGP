@@ -3,7 +3,9 @@ import os
 
 
 def parse_args():
-    parser = argparse.ArgumentParser()
+    parser = argparse.ArgumentParser(
+        description='Function: Filter both inputfiles and remove sequences that are only present in one file.',
+        epilog='Usage Example: python RemoveReads.py -i sample_1_bad.fastq sample_2_bad.fastq')
     parser.add_argument('-i', '--inputfiles', metavar='', type=str, nargs=2, required=False,
                         help='The file you wish to use as input for the program.')
     args = parser.parse_args()

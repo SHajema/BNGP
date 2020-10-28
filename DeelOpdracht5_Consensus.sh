@@ -1,11 +1,11 @@
 #!/usr/bin/env bash
 
 usage() {
-echo "$0 script is used to index the reference Genome and the Align reads onto that indexed Genome."
+echo "Function: $0 script is used to create a consensus file (In Fasta format) from the given VCF file at the given output location."
 echo "$0 usage:" && grep "[[:space:]].)\ #" $0 | sed 's/#//' | sed -r 's/([a-z])\)/-\1/';
 echo ""
 echo "Example:"
-echo "$0 -r <path to reference genome> -d <path to directory + basename> -t <number of threads as integer> -1 <path to Read1 file> -2 <path to Read2 file>"
+echo "$0 -r lclav_genome.fa -v Results/Variants/sample1.VCF -f Results/Variants/Consensus.fa -t 4"
 exit 0;
 }
 [ $# -eq 0 ] && usage
