@@ -94,4 +94,4 @@ rule AnalyseVCF:
     output:
         "Results/Variants/bngsa_sample_Variants.txt"
     shell:
-        'python {SCRIPTS}DeelOpdracht6/py -i {input} -o {output}'
+        'python {SCRIPTS}DeelOpdracht6.py -i {input} -o {output}'
