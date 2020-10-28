@@ -1,3 +1,14 @@
+import argparse
+
+
+def parse_args():
+    parser = argparse.ArgumentParser()
+    parser.add_argument('-i', '--inputfile', metavar='File', type=str, required=True,
+                        help='The file you wish to use as input for the program.')
+    parser.add_argument('-o', '--outputfile', metavar='Directory', type=str, default="Variants.txt",
+                        help='Use this to select an name for the output file')
+    args = parser.parse_args()
+    return args
 
 
 def read_file(file_path):
@@ -30,6 +41,7 @@ def categorize_data(file_data):
 
 
 def calc_indel(lines):
+    mut_dict = create_mut_dict()
     insertions, deletions = 0, 0
     for key in lines.keys():
         line = lines[key]
@@ -39,16 +51,11 @@ def calc_indel(lines):
                     deletions += 1
                 elif len(line['REF'][0]) < len(seq):
                     insertions += 1
-                else:
-                    print(line)
-    return deletions, insertions
-
-
-def calc_mutations(lines):
-    mut_dict = create_mut_dict()
-    for key in lines.keys():
-        line = lines[key]
-        print(line)
+        else:
+            base = line['REF'][0]
+            for alt_base in line['ALT']:
+                mut_dict[(base+alt_base).upper()] += 1
+    return deletions, insertions, mut_dict
 
 
 def create_mut_dict():
@@ -69,8 +76,33 @@ def create_mut_dict():
     return mut_dict
 
 
-if __name__ == '__main__':
-    file_data = read_file('Input\\Ref_Genome.VCF')
+def create_result_string(inputfile, insertions, deletions, mut_dict):
+    result_string = f'The Variants of : {inputfile}\n\n'
+    result_string += f'The number of Deletions: {deletions}\n'
+    result_string += f'The number of Insertions: {insertions}\n'
+    result_string += f'The ratio of Deletions/Insertions: ' \
+        f'{deletions} ({(insertions/(deletions+insertions)*100):.2f}%) ' \
+        f'{insertions} ({(deletions/(deletions+insertions)*100):.2f}%)\n\n'
+    for base_combination in sorted(mut_dict.keys()):
+        result_string += f'Number of {base_combination[0]} -> {base_combination[1]} mutations: {mut_dict[base_combination]}\n'
+    return result_string
+
+
+def write_out(file, out):
+    with open(file, 'w') as f:
+        f.write(out)
+    return f'Output written to: {file}'
+
+
+def main(inputfile, outputfile):
+    file_data = read_file(inputfile)
     lines = categorize_data(file_data)
-    deletions, insertions = calc_indel(lines)
-    calc_mutations(lines)
+    deletions, insertions, mut_dict = calc_indel(lines)
+    result_string = create_result_string(inputfile, insertions, deletions, mut_dict)
+    write_out(outputfile, result_string)
+    print(result_string)
+
+
+if __name__ == '__main__':
+    args = parse_args()
+    main(args.inputfile, args.outputfile)
