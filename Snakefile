@@ -86,3 +86,11 @@ rule Consensus_creation:
         "Results/bngsa_consensus.fasta"
     shell:
         'bash {SCRIPTS}DeelOpdracht5_Consensus.sh  -r {REFGEN} -v {input} -f {output} -t {THREADS}'
+
+rule AnalyseVCF:
+    input:
+        "Results/Variants/bngsa_sample.VCF"
+    output:
+        "Results/Variants/bngsa_sample_Variants.txt"
+    shell:
+        'python {SCRIPTS}DeelOpdracht6/py -i {input} -o {output}'
