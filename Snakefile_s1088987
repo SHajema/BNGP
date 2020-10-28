@@ -1,6 +1,3 @@
-import os
-
-SAMPLES = ["/exports/bngp_data/reads/bngsa_nietinfected_1.fastq", "/exports/bngp_data/reads/bngsa_nietinfected_2.fastq"]
 SCRIPTS = "/exports/bngp_home/BNGP/"
 REFGEN = "/exports/bngp_data/refgenome/lclav_genome.fa"
 THREADS = 4
@@ -95,3 +92,7 @@ rule AnalyseVCF:
         "Results/Variants/bngsa_sample_Variants.txt"
     shell:
         'python {SCRIPTS}DeelOpdracht6.py -i {input} -o {output}'
+
+rule help:
+    shell:
+        'cat {SCRIPTS}README.txt'
