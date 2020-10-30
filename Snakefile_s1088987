@@ -1,4 +1,4 @@
-SCRIPTS = ""
+SCRIPTS = "./"
 REFGEN = "/exports/bngp_data/refgenome/lclav_genome.fa"
 THREADS = 4
 CHUNKS = 3_000_000
