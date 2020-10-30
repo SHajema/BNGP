@@ -1,6 +1,4 @@
-configfile: 'Snake_config.yaml'
-
-SCRIPTS = config['scripts_dir']
+SCRIPTS = "/home/s1088987/inlevermap/BNGP/"
 REFGEN = "/exports/bngp_data/refgenome/lclav_genome.fa"
 THREADS = 4
 CHUNKS = 3_000_000
