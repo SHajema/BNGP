@@ -1,4 +1,4 @@
-SCRIPTS = "/home/s1088987/inlevermap/BNGP/"
+SCRIPTS = "/exports/bngp_home/inlevermap/BNGP/"
 REFGEN = "/exports/bngp_data/refgenome/lclav_genome.fa"
 THREADS = 4
 CHUNKS = 3_000_000
